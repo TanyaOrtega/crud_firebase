@@ -1,74 +1,51 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
-import 'package:crud_firebase/services/firebase_service.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  runApp(const MyApp());
+import 'home_screen.dart';
+
+void main() {
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: '3.7 Conexion con Firebase',
-      home: Home(),
-    );
-  }
-}
-
-class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
-
-  @override
-  _HomeState createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('3.7 Conexión con Firebase'),
+    return MaterialApp(
+      title: 'Pantalla App',
+      theme: ThemeData(
+        primaryColor: Colors.indigo,
+        scaffoldBackgroundColor: const Color.fromARGB(0, 245, 242, 242),
+        appBarTheme: AppBarTheme(
+          color: Colors.pinkAccent.withOpacity(0.8),
+          iconTheme: IconThemeData(color: Colors.white),
+        ),
       ),
-      body: FutureBuilder(
-        future: getMovies(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          } else {
-            // Lista de todos los datos
-            return ListView.builder(
-              itemCount: snapshot.data?.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Título: ${snapshot.data?[index]['titulo'] ?? ''}'),
-                      Text('Año: ${snapshot.data?[index]['año'] ?? ''}'),
-                      Text('Género: ${snapshot.data?[index]['genero'] ?? ''}'),
-                      Text('Director: ${snapshot.data?[index]['director'] ?? ''}'),
-                      Text('Sinopsis: ${snapshot.data?[index]['sinopsis'] ?? ''}'),
-                    ],
-                  ),
-                );
-              },
-            );
-          }
-        },
+      home: Stack(
+        children: [
+          Image.network(
+            'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Sala_de_cine.jpg/1200px-Sala_de_cine.jpg',
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+          ),
+          Container(
+            color: Color.fromARGB(194, 255, 255, 255).withOpacity(0.3),
+            width: double.infinity,
+            height: double.infinity,
+          ),
+          Scaffold(
+            backgroundColor: Colors.transparent,
+            appBar: AppBar(
+              title: Text('Pantalla App'),
+            ),
+            body: Container(
+              padding: EdgeInsets.all(16.0),
+              color: Colors.transparent,
+              child: HomeScreen(),
+            ),
+          ),
+        ],
       ),
     );
   }
